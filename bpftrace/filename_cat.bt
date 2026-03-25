@@ -1,0 +1,12 @@
+#!/usr/bin/env bpftrace
+
+// Attach to the tracepoint for the 'openat' system call
+tracepoint:syscalls:sys_enter_openat
+/comm == "cat"/
+{
+    // args->filename contains the pointer to the file path
+    // str() function converts the pointer to a readable string
+    printf("========================================\n");
+    printf("PID %d (%s) is trying to open: %s\n", pid, comm, str(args->filename));
+    printf("========================================\n");
+}
