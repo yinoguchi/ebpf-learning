@@ -12,4 +12,4 @@ sudo bpftrace kstack_cat.bt
 ```
 ## Contents
 - kstack_cat.bt : Print kernel stack trace when cat is executed.
-- filename_cat_all.bt : Show all files opened by the cat command.
+- filename_cat.bt : Show all files opened by the cat command.
