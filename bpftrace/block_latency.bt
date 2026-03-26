@@ -1,0 +1,48 @@
+#!/usr/bin/env bpftrace
+
+// 1. Triggered when a block I/O request is issued to the device
+tracepoint:block:block_rq_issue
+{
+    // args->dev and args->sector uniquely identify a specific I/O request
+    // nsecs is a built-in variable for the current time in nanoseconds
+    @start[args->dev, args->sector] = nsecs;
+}
+
+// 2. Triggered when the block I/O request completes
+tracepoint:block:block_rq_complete
+/@start[args->dev, args->sector]/
+{
+    // Calculate the latency (duration) in nanoseconds, then convert to microseconds
+    $duration_ns = nsecs - @start[args->dev, args->sector];
+    $duration_us = $duration_ns / 1000;
+
+    // Record the latency in a histogram visualization
+    @usecs = hist($duration_us);
+
+    // Clean up memory
+    delete(@start[args->dev, args->sector]);
+}
+
+/* 
+Example of Output
+# sudo bpftrace block_latency.bt > log &
+[1] 655045
+# dd if=/dev/zero of=/tmp/test.dat bs=1M count=100 oflag=dsync
+100+0 records in
+100+0 records out
+104857600 bytes (105 MB, 100 MiB) copied, 1.58817 s, 66.0 MB/s
+# kill %1
+# cat log
+Attaching 2 probes...
+
+
+@start[8388608, 0]: 8146807036786212
+@start[11534336, 0]: 8146811431080258
+@usecs:
+[64, 128)              5 |                                                    |
+[128, 256)           306 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[256, 512)           200 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                   |
+
+[1]+  Done                    sudo bpftrace block_latency.bt > log
+
+*/
