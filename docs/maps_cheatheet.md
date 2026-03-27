@@ -24,7 +24,7 @@ Maps show their true power when combined with built-in aggregation functions:
 * `avg(value)`: Calculates the average.
 * `min(value)` / `max(value)`: Records the minimum or maximum value observed.
 
-## 5. Memory Management (Crucial for SMEs)
+## 5. Memory Management
 In production environments, Maps consume kernel memory. Always clean up data when it's no longer needed to prevent memory leaks!
 * `delete(@map[key]);` : Deletes a specific key-value pair. Typically used in `sys_exit` probes after the data is processed.
 * `clear(@map);` : Empties the entire map. Often used with `interval` probes to reset counters periodically (e.g., every 1 second).
