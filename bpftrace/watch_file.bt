@@ -1,0 +1,27 @@
+#!/usr/bin/env bpftrace
+
+/*
+ * watch_file.bt - Trace which processes open a specific file.
+ *
+ * Usage: sudo ./watch_file.bt "/etc/hosts"
+ */
+
+BEGIN
+{
+    if (str($1) == "") {
+        printf("USAGE: watch_file.bt <full_path_to_file>\n");
+        printf("Example: sudo ./watch_file.bt \"/etc/hosts\"\n");
+        exit();
+    }
+    
+    printf("Tracing opens for \"%s\"... Hit Ctrl-C to end.\n", str($1));
+    printf("%-10s %-16s %-6s %s\n", "TIME", "COMM", "PID", "FILE");
+}
+
+tracepoint:syscalls:sys_enter_openat
+{
+    if (str($1) != "" && str(args->filename) == str($1)) {
+        time("%H:%M:%S  ");
+        printf("%-16s %-6d %s\n", comm, pid, str(args->filename));
+    }
+}
