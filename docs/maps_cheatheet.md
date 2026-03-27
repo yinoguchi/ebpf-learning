@@ -25,6 +25,10 @@ Maps show their true power when combined with built-in aggregation functions:
 * `min(value)` / `max(value)`: Records the minimum or maximum value observed.
 
 ## 5. Memory Management
-In production environments, Maps consume kernel memory. Always clean up data when it's no longer needed to prevent memory leaks!
-* `delete(@map[key]);` : Deletes a specific key-value pair. Typically used in `sys_exit` probes after the data is processed.
+In production environments, Maps consume kernel memory. The need for cleanup depends on the map type:
+* **Maps WITH Keys (e.g., `@map[tid]`):** Grow dynamically. **MUST be cleaned up!**
+* **Maps WITHOUT Keys (e.g., `@ = count();`):** Fixed size. **Safe to leave.**
+
+**Cleanup Commands:**
+* `delete(@map[key]);` : Deletes a specific key-value pair. Typically used in `sys_exit` probes after data is processed to prevent memory leaks.
 * `clear(@map);` : Empties the entire map. Often used with `interval` probes to reset counters periodically (e.g., every 1 second).
