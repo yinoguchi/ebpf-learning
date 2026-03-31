@@ -13,7 +13,6 @@ take seconds to complete, causing application timeouts. `biolatency` visualizes 
 **Command:**
 ```bash
 # Trace disk I/O latency by device (-D)
-```bash
 # /usr/share/bcc/tools/biolatency -D
 Tracing block device I/O... Hit Ctrl-C to end.
 disk = sda
