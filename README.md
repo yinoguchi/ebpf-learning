@@ -8,8 +8,5 @@ eBPF requires root privileges. Run the scripts using `sudo` or as the root user:
 
 ```bash
 # Example
-sudo bpftrace kstack_cat.bt
+sudo bpftrace kstack.bt
 ```
-## Contents
-- kstack_cat.bt : Print kernel stack trace when cat is executed.
-- filename_cat.bt : Show all files opened by the cat command.
