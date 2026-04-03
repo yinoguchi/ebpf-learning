@@ -1,6 +1,6 @@
 #!/usr/bin/env bpftrace
 
-kprobe:__netif_receive_skb
+tracepoint:net:netif_receive_skb
 {
     printf("\n=== Packet Received! ===\n");
     printf("Process: %s (PID: %d)\n", comm, pid);
